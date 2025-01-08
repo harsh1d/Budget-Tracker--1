@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #4CAF50;
+        }
+
+        .budget-display {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .budget-display div {
+            text-align: center;
+        }
+
+        .budget-display div h2 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .budget-display div span {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .transaction-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .transaction-form input, .transaction-form select, .transaction-form button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .transaction-form button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .transaction-form button:hover {
+            background-color: #45A049;
+        }
+
+        .transaction-list {
+            list-style: none;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transaction-item span {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .transaction-item .material-icons {
+            font-size: 1.2rem;
+            color: #777;
+        }
+
+        .transaction-item .income {
+            color: #4CAF50;
+        }
+
+        .transaction-item .expense {
+            color: #F44336;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .controls button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .controls .clear-history {
+            background-color: #F44336;
+            color: #fff;
+        }
+
+        .controls .clear-history:hover {
+            background-color: #D32F2F;
+        }
+
+        .controls .convert {
+            background-color: #2196F3;
+            color: #fff
+        }
+
+        .controls .convert:hover {
+            background-color: #1976D2;
+        }
+
+        .currency-display {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .currency-display span {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .recent-transaction {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            color: #fff;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Budget Tracker</h1>
+        </div>
+
+        <div class="budget-display">
+            <div>
+                <h2>Balance</h2>
+                <span id="balance">$0.00</span>
+            </div>
+            <div>
+                <h2>Income</h2>
+                <span id="income">$0.00</span>
+            </div>
+            <div>
+                <h2>Expenses</h2>
+                <span id="expenses">$0.00</span>
+            </div>
+        </div>
+
+        <form class="transaction-form" id="transaction-form">
+            <input type="text" id="description" placeholder="Description" required>
+            <input type="number" id="amount" placeholder="Amount" required>
+            <select id="type">
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+            </select>
+            <button type="submit">Add Transaction</button>
+        </form>
+
+        <ul class="transaction-list" id="transaction-list">
+            <!-- Transactions will appear here -->
+        </ul>
+
+        <div class="controls">
+            <button class="clear-history" id="clear-history">Clear History</button>
+            <button class="convert" id="convert">Convert to INR</button>
+            <button class="export-excel" id="export-excel">Export to Excel</button>
+        </div>
+
+        <div class="currency-display" id="currency-display"></div>
+
+        <div class="recent-transaction" id="recent-transaction">Recent Transaction</div>
+    </div>
+
+    <script>
+        const balanceEl = document.getElementById('balance');
+        const incomeEl = document.getElementById('income');
+        const expensesEl = document.getElementById('expenses');
+        const transactionForm = document.getElementById('transaction-form');
+        const transactionList = document.getElementById('transaction-list');
+        const clearHistoryBtn = document.getElementById('clear-history');
+        const convertBtn = document.getElementById('convert');
+        const exportExcelBtn = document.getElementById('export-excel');
+        const currencyDisplay = document.getElementById('currency-display');
+        const recentTransactionEl = document.getElementById('recent-transaction');
+
+        let transactions = [];
+
+        transactionForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const description = document.getElementById('description').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('type').value;
+
+            const transaction = {
+                id: Date.now(),
+                description,
+                amount,
+                type,
+            };
+
+            transactions.push(transaction);
+            showRecentTransaction(transaction);
+            updateUI();
+            transactionForm.reset();
+        });
+
+        clearHistoryBtn.addEventListener('click', function () {
+            transactions = [];
+            updateUI();
+        });
+
+        convertBtn.addEventListener('click', function () {
+            const conversionRate = 74.5; // Example conversion rate from USD to INR
+            const balanceInINR = parseFloat(balanceEl.textContent.replace('$', '')) * conversionRate;
+            currencyDisplay.textContent = `Balance in INR: ₹${balanceInINR.toFixed(2)}`;
+        });
+
+        exportExcelBtn.addEventListener('click', function () {
+            const table = document.createElement('table');
+            const headerRow = table.insertRow();
+            ['Description', 'Amount', 'Type'].forEach(text => {
+                const cell = headerRow.insertCell();
+                cell.textContent = text;
+            });
+
+            transactions.forEach(transaction => {
+                const row = table.insertRow();
+                Object.values(transaction).slice(1).forEach(text => {
+                    const cell = row.insertCell();
+                    cell.textContent = text;
+                });
+            });
+
+            const blob = new Blob([table.outerHTML], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'transactions.xls';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        function updateUI() {
